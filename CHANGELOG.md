@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.0.0...v1.0.1) (2026-06-16)
+
+
+### Bug Fixes
+
+* copy yt-dlp cookies to a writable dir to avoid read-only secret mount ([a262c44](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/a262c4463a9569f5c2858efdabc5ad29c108e14d))
+
 # 1.0.0 (2026-06-16)
 
 
