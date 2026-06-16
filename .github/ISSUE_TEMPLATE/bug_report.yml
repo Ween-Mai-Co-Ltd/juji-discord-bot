@@ -1,0 +1,99 @@
+name: 🐛 Bug Report / รายงานบั๊ก
+description: Report a problem with the bot / แจ้งปัญหาการใช้งานบอท
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! / ขอบคุณที่สละเวลารายงานปัญหา 🙏
+        Please fill in as much as you can. / กรุณากรอกข้อมูลให้ครบถ้วนที่สุด
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before submitting / ก่อนส่ง
+      options:
+        - label: I searched existing issues and this is not a duplicate. / ฉันได้ค้นหา issue ที่มีอยู่แล้วและไม่ซ้ำกัน
+          required: true
+        - label: I'm using the latest version. / ฉันใช้เวอร์ชันล่าสุด
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug / อธิบายปัญหา
+      description: A clear and concise description of what the bug is. / อธิบายปัญหาให้ชัดเจน
+      placeholder: When I run /play ... / เมื่อฉันใช้ /play ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce / ขั้นตอนการเกิดปัญหา
+      description: How can we reproduce it? / เราจะทำให้เกิดปัญหานี้ซ้ำได้อย่างไร
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior / ผลที่คาดหวัง
+      description: What did you expect to happen? / คุณคาดหวังให้เกิดอะไรขึ้น
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior / ผลที่เกิดขึ้นจริง
+      description: What actually happened? / จริง ๆ แล้วเกิดอะไรขึ้น
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected command or area / คำสั่งหรือส่วนที่เกี่ยวข้อง
+      options:
+        - /play
+        - /stop
+        - /ping
+        - /help
+        - Voice / queue — เสียง / คิวเพลง
+        - Deployment / Docker — การ deploy / Docker
+        - Other / อื่น ๆ
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment / สภาพแวดล้อม
+      options:
+        - Local (bun run start) — รันในเครื่อง
+        - Docker (local) — Docker ในเครื่อง
+        - Production (server) — เซิร์ฟเวอร์จริง
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshots / Log หรือภาพหน้าจอ
+      description: Paste relevant logs or attach screenshots. / วาง log ที่เกี่ยวข้องหรือแนบภาพหน้าจอ
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context / ข้อมูลเพิ่มเติม
+      description: Anything else that might help. / ข้อมูลอื่น ๆ ที่อาจช่วยได้
+    validations:
+      required: false
