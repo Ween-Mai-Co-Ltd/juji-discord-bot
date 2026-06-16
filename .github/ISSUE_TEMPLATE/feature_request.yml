@@ -1,0 +1,50 @@
+name: ✨ Feature Request / ขอฟีเจอร์ใหม่
+description: Suggest an idea or improvement / เสนอฟีเจอร์หรือการปรับปรุง
+title: '[Feature]: '
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion! / ขอบคุณสำหรับข้อเสนอ 🙌
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before submitting / ก่อนส่ง
+      options:
+        - label: I searched existing issues and this is not a duplicate. / ฉันได้ค้นหา issue ที่มีอยู่แล้วและไม่ซ้ำกัน
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation / ปัญหาหรือแรงจูงใจ
+      description: What problem does this solve? Is it related to a frustration? / ฟีเจอร์นี้แก้ปัญหาอะไร หรือเกี่ยวข้องกับความไม่สะดวกอย่างไร
+      placeholder: I'm always frustrated when ... / ฉันรู้สึกไม่สะดวกทุกครั้งที่ ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution / วิธีแก้ที่เสนอ
+      description: Describe what you'd like to happen. / อธิบายสิ่งที่คุณอยากให้เป็น
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered / ทางเลือกอื่นที่พิจารณา
+      description: Any other approaches you've thought about. / แนวทางอื่น ๆ ที่คุณเคยคิดถึง
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context / ข้อมูลเพิ่มเติม
+      description: Mockups, examples, or links that help. / ภาพตัวอย่าง ตัวอย่าง หรือลิงก์ที่ช่วยได้
+    validations:
+      required: false
