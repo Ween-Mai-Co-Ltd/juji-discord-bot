@@ -6,8 +6,7 @@ import {
   type ChatInputCommandInteraction,
 } from 'discord.js'
 import { Command } from '../types/command'
-import { ytDlpService } from '../music/YtDlpService'
-import { musicManager } from '../music/MusicManager'
+import { musicService } from '../music/MusicService'
 import { secondsToString } from '../music/format'
 
 export default class Play extends Command {
@@ -41,11 +40,13 @@ export default class Play extends Command {
     const query = interaction.options.getString('query', true)
     await interaction.deferReply()
 
-    const track = await ytDlpService.resolveTrack(query)
-    await interaction.editReply({ content: `⏳ Downloading **${track.title}**…` })
-
-    const filePath = await ytDlpService.downloadTrack(track)
-    const { startedNow, position } = musicManager.enqueue(voiceChannel, { track, filePath })
+    const { track, startedNow, position } = await musicService.playFromQuery(
+      voiceChannel,
+      query,
+      async (resolved) => {
+        await interaction.editReply({ content: `⏳ Downloading **${resolved.title}**…` })
+      },
+    )
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Blurple)

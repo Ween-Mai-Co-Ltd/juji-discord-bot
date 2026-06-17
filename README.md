@@ -13,6 +13,15 @@ A Discord bot built with [discord.js](https://discord.js.org) v14, running on th
 
 The music player joins the voice channel you're in, downloads audio with [yt-dlp](https://github.com/yt-dlp/yt-dlp), and queues tracks per server — `/play` while something is already playing adds to the queue instead of interrupting it.
 
+## Chat
+
+`@mention` the bot in a text channel and it replies using a local LLM via [Ollama](https://ollama.com). It can also control music from natural language — e.g. "@Juji play lofi beats" or "@Juji stop the music". Notes:
+
+- It responds **only** to messages that mention it (replies are ignored for now), and ignores other bots.
+- **No memory** — each message is a standalone prompt.
+- It stays on-topic (chat + music); off-topic, unsafe, or instruction-override requests get a polite decline.
+- LLM requests are processed **one at a time** across the whole bot (a global queue), so a small CPU-only model stays within budget.
+
 ## Prerequisites
 
 - [Bun](https://bun.com) installed
@@ -21,6 +30,8 @@ The music player joins the voice channel you're in, downloads audio with [yt-dlp
   - [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) on your `PATH` (e.g. `brew install yt-dlp`)
   - [Node.js](https://nodejs.org) available — yt-dlp uses it to solve YouTube signatures (`--js-runtime node`)
   - ffmpeg is bundled automatically via the `ffmpeg-static` dependency, so no separate install is needed
+- For the chat assistant (mention the bot):
+  - An [Ollama](https://ollama.com) server reachable by the bot. With Docker Compose this is the bundled `ollama` service; for local dev, run Ollama yourself and set `OLLAMA_HOST` (or set `LLM_ENABLED=false` to turn chat off).
 
 ## Setup
 
@@ -39,6 +50,14 @@ The music player joins the voice channel you're in, downloads audio with [yt-dlp
    # Optional (music player):
    # MUSIC_CACHE_DIR=./music_cache       # where downloaded audio is cached (default: ./music_cache)
    # YTDLP_COOKIES_FILE=./cookies.txt     # cookies for age-restricted/region-locked videos
+
+   # Optional (chat assistant / Ollama):
+   # OLLAMA_HOST=http://localhost:11434   # Ollama base URL (default: http://ollama:11434, the compose service)
+   # OLLAMA_MODEL=gemma4:e2b              # model to run (default: gemma4:e2b)
+   # OLLAMA_NUM_CTX=4096                  # context window; kept small so the KV cache doesn't OOM the model (default: 4096)
+   # LLM_TIMEOUT_MS=120000                # per-request timeout in ms (default: 120000)
+   # LLM_MAX_INPUT_CHARS=1000             # cap on user prompt length (default: 1000)
+   # LLM_ENABLED=false                    # disable chat entirely (default: true)
    ```
 
    `DISCORD_TOKEN` and `DISCORD_CLIENT_ID` are required and validated at startup. If `YTDLP_COOKIES_FILE` is not present, yt-dlp falls back to reading cookies from your local Chrome profile.
@@ -98,6 +117,10 @@ To stop: `docker compose down`.
 
 > The container runs `bun run deploy && bun run start` on startup, so slash commands are re-registered with Discord automatically on every launch. The service uses `restart: unless-stopped`, so it survives crashes and server reboots. Downloaded audio is cached in the `music_cache` named volume so it persists across restarts.
 
+The Compose stack also starts an [Ollama](https://ollama.com) service for the chat assistant (the bot reaches it at `http://ollama:11434` over the Compose network — no extra env needed). On first boot the bot **auto-pulls** the configured model (`gemma4:e2b` by default); this can take a while, so watch for `[llm] model … pulled` in the logs. The model is loaded into memory **lazily on the first chat message** (not at pull time), so `ollama ps` stays empty until someone @mentions the bot. To pull manually: `docker compose exec ollama ollama pull gemma4:e2b`. Models persist in the `ollama_models` volume.
+
+The `ollama` service env keeps inference cheap and bounded on a CPU host: `OLLAMA_NUM_PARALLEL=1` + `OLLAMA_MAX_LOADED_MODELS=1` process one prompt at a time, and `OLLAMA_CONTEXT_LENGTH=4096` caps the context — a large context makes Ollama allocate a KV cache big enough to OOM-kill the model runner on load (`llama runner process has terminated: signal: killed`). The bot also sends `num_ctx` per request, so it's capped from both sides.
+
 ## Project structure
 
 ```
@@ -107,7 +130,8 @@ src/
 ├── deploy-commands.ts    # Registers slash commands with Discord
 ├── commands/             # Slash commands (one class file each)
 ├── events/               # Gateway event handlers (one class file each)
-├── music/                # Music domain — MusicManager, GuildPlayer, yt-dlp service
+├── music/                # Music domain — MusicManager, GuildPlayer, MusicService, yt-dlp service
+├── llm/                  # Chat domain — OllamaClient, SerialQueue, Assistant
 ├── config/               # Env var loading & validation
 └── types/                # Shared TypeScript types & Client augmentation
 ```
