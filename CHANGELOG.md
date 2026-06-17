@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.1.0...v1.2.0) (2026-06-17)
+
+
+### Features
+
+* integrate LLM to chat bot and music feature ([8be440c](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/8be440ca549f652eb82843d0b5fb632538ffa97b))
+
 # [1.1.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.0.1...v1.1.0) (2026-06-16)
 
 
