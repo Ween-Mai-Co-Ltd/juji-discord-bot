@@ -78,10 +78,13 @@ export default class MessageCreate extends Event<typeof Events.MessageCreate> {
       return
     }
 
-    const { track, startedNow, position } = await musicService.playFromQuery(
-      voiceChannel,
-      result.query,
-    )
+    const outcome = await musicService.playFromQuery(voiceChannel, result.query)
+    if (!outcome.ok) {
+      await this.reply(message, "🔴 Sorry, I can't play live streams.")
+      return
+    }
+
+    const { track, startedNow, position } = outcome
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Blurple)

@@ -1,13 +1,12 @@
 import type { VoiceBasedChannel } from 'discord.js'
 import { MusicManager, musicManager } from './MusicManager'
 import { YtDlpService, ytDlpService } from './YtDlpService'
-import type { Track } from '../types/track'
+import { streamThresholdSec } from '../config'
+import type { PlaybackSource, Track } from '../types/track'
 
-export interface PlayResult {
-  track: Track
-  startedNow: boolean
-  position: number
-}
+export type PlayResult =
+  | { ok: true; track: Track; startedNow: boolean; position: number }
+  | { ok: false; reason: 'live-unsupported' }
 
 export class MusicService {
   constructor(
@@ -21,10 +20,19 @@ export class MusicService {
     onResolved?: (track: Track) => void | Promise<void>,
   ): Promise<PlayResult> {
     const track = await this.ytDlp.resolveTrack(query)
+    if (track.isLive) {
+      return { ok: false, reason: 'live-unsupported' }
+    }
+
     await onResolved?.(track)
-    const filePath = await this.ytDlp.downloadTrack(track)
-    const { startedNow, position } = this.manager.enqueue(channel, { track, filePath })
-    return { track, startedNow, position }
+
+    const source: PlaybackSource =
+      track.durationSec > streamThresholdSec
+        ? { kind: 'stream', open: () => this.ytDlp.streamTrack(track) }
+        : { kind: 'file', filePath: await this.ytDlp.downloadTrack(track) }
+
+    const { startedNow, position } = this.manager.enqueue(channel, { track, source })
+    return { ok: true, track, startedNow, position }
   }
 
   stop(guildId: string): boolean {
