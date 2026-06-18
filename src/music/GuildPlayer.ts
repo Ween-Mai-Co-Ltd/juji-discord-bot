@@ -57,16 +57,28 @@ export class GuildPlayer {
 
   private playItem(item: QueuedTrack): void {
     this.current = item
-    const resource = createAudioResource(createReadStream(item.filePath), {
-      inputType: StreamType.OggOpus,
-    })
-    this.player.play(resource)
-    entersState(this.player, AudioPlayerStatus.Playing, PLAYING_TIMEOUT_MS).catch(
-      (error: unknown) => {
-        console.error('Track failed to start playing:', error)
-        this.advance()
-      },
-    )
+    void this.startPlayback(item)
+  }
+
+  private async startPlayback(item: QueuedTrack): Promise<void> {
+    try {
+      const input =
+        item.source.kind === 'file'
+          ? createReadStream(item.source.filePath)
+          : await item.source.open()
+
+      if (this.destroyed || this.current !== item) {
+        input.destroy()
+        return
+      }
+
+      const resource = createAudioResource(input, { inputType: StreamType.OggOpus })
+      this.player.play(resource)
+      await entersState(this.player, AudioPlayerStatus.Playing, PLAYING_TIMEOUT_MS)
+    } catch (error) {
+      console.error('Track failed to start playing:', error)
+      this.advance()
+    }
   }
 
   private advance(): void {

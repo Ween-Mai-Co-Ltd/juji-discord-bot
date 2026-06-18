@@ -40,13 +40,16 @@ export default class Play extends Command {
     const query = interaction.options.getString('query', true)
     await interaction.deferReply()
 
-    const { track, startedNow, position } = await musicService.playFromQuery(
-      voiceChannel,
-      query,
-      async (resolved) => {
-        await interaction.editReply({ content: `⏳ Downloading **${resolved.title}**…` })
-      },
-    )
+    const result = await musicService.playFromQuery(voiceChannel, query, async (resolved) => {
+      await interaction.editReply({ content: `⏳ Preparing **${resolved.title}**…` })
+    })
+
+    if (!result.ok) {
+      await interaction.editReply({ content: "🔴 Sorry, I can't play live streams." })
+      return
+    }
+
+    const { track, startedNow, position } = result
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Blurple)

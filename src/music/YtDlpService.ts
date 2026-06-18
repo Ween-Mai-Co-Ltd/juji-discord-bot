@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { copyFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
+import type { Readable } from 'node:stream'
 import ffmpegStatic from 'ffmpeg-static'
 import { cacheDir, cookiesFile } from '../config'
 import type { Track } from '../types/track'
@@ -17,6 +18,8 @@ interface YtDlpDump {
   webpage_url: string
   thumbnail?: string
   duration?: number
+  is_live?: boolean
+  live_status?: string
 }
 
 function isYtDlpDump(value: unknown): value is YtDlpDump {
@@ -69,6 +72,10 @@ export class YtDlpService {
       url: parsed.webpage_url,
       thumbnail: parsed.thumbnail,
       durationSec: typeof parsed.duration === 'number' ? Math.round(parsed.duration) : 0,
+      isLive:
+        parsed.is_live === true ||
+        parsed.live_status === 'is_live' ||
+        parsed.live_status === 'is_upcoming',
     }
   }
 
@@ -100,6 +107,71 @@ export class YtDlpService {
       throw new Error(`Download finished but the expected file was not found: ${outputPath}`)
     }
     return outputPath
+  }
+
+  async streamTrack(track: Track): Promise<Readable> {
+    const ytDlp = spawn('yt-dlp', [
+      '-f',
+      'bestaudio/best',
+      '--no-playlist',
+      '--js-runtimes',
+      'deno',
+      ...(await this.cookieArgs()),
+      '-o',
+      '-',
+      track.url,
+    ])
+
+    const ffmpeg = spawn(this.ffmpegPath ?? 'ffmpeg', [
+      '-loglevel',
+      'error',
+      '-i',
+      'pipe:0',
+      '-vn',
+      '-ar',
+      '48000',
+      '-ac',
+      '2',
+      '-c:a',
+      'libopus',
+      '-b:a',
+      '128k',
+      '-f',
+      'opus',
+      'pipe:1',
+    ])
+
+    let killed = false
+    const kill = (): void => {
+      if (killed) return
+      killed = true
+      ytDlp.kill('SIGKILL')
+      ffmpeg.kill('SIGKILL')
+    }
+
+    ytDlp.stdout.on('error', () => undefined)
+    ytDlp.stdin.on('error', () => undefined)
+    ffmpeg.stdin.on('error', () => undefined)
+    ytDlp.stdout.pipe(ffmpeg.stdin)
+
+    ytDlp.on('error', (error: Error) => {
+      console.error('yt-dlp stream process failed:', error)
+      kill()
+    })
+    ffmpeg.on('error', (error: Error) => {
+      console.error('ffmpeg stream process failed:', error)
+      kill()
+    })
+    ytDlp.on('close', (code) => {
+      if (code !== 0 && code !== null) {
+        console.error(`yt-dlp stream exited with code ${code}`)
+      }
+    })
+
+    ffmpeg.stdout.on('close', kill)
+    ffmpeg.stdout.on('error', kill)
+
+    return ffmpeg.stdout
   }
 
   private async cookieArgs(): Promise<string[]> {
