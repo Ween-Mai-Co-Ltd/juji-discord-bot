@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.3.2...v1.4.0) (2026-06-19)
+
+
+### Features
+
+* add /skip command and chat action to skip the current song ([5f1ede2](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/5f1ede22d8d1de813c2974d3ada42ad120bf1798))
+
 ## [1.3.2](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.3.1...v1.3.2) (2026-06-19)
 
 
