@@ -60,6 +60,9 @@ export default class MessageCreate extends Event<typeof Events.MessageCreate> {
       case 'stop':
         await this.handleStop(message, result)
         break
+      case 'skip':
+        await this.handleSkip(message, result)
+        break
       case 'chat':
       case 'reject':
         await this.reply(message, result.reply)
@@ -108,6 +111,11 @@ export default class MessageCreate extends Event<typeof Events.MessageCreate> {
   private async handleStop(message: Message<true>, result: AssistantResult): Promise<void> {
     const stopped = musicService.stop(message.guildId)
     await this.reply(message, stopped ? result.reply : 'Nothing is playing right now.')
+  }
+
+  private async handleSkip(message: Message<true>, result: AssistantResult): Promise<void> {
+    const outcome = musicService.skip(message.guildId)
+    await this.reply(message, outcome ? result.reply : 'Nothing is playing right now.')
   }
 
   private keepTyping(message: Message<true>): () => void {

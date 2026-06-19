@@ -7,7 +7,7 @@ const SYSTEM_PROMPT = systemPromptText.trim()
 const RESPONSE_SCHEMA = {
   type: 'object',
   properties: {
-    action: { type: 'string', enum: ['play', 'stop', 'chat', 'reject'] },
+    action: { type: 'string', enum: ['play', 'stop', 'skip', 'chat', 'reject'] },
     query: { type: 'string' },
     reply: { type: 'string' },
   },
@@ -16,11 +16,11 @@ const RESPONSE_SCHEMA = {
 
 const NUM_PREDICT = 512
 const MAX_REPLY_CHARS = 1900
-const ACTIONS: readonly AssistantAction[] = ['play', 'stop', 'chat', 'reject']
+const ACTIONS: readonly AssistantAction[] = ['play', 'stop', 'skip', 'chat', 'reject']
 
 const FALLBACK: AssistantResult = {
   action: 'reject',
-  reply: "Sorry, I didn't catch that. I can chat with you, or play and stop music — try again.",
+  reply: "Sorry, I didn't catch that. I can chat, or play, skip, and stop music — try again.",
 }
 
 export class Assistant {
@@ -80,6 +80,8 @@ function defaultReply(action: Exclude<AssistantAction, 'play'>): string {
   switch (action) {
     case 'stop':
       return '⏹️ Stopping the music.'
+    case 'skip':
+      return '⏭️ ข้ามเพลงให้แล้วนะครับ'
     case 'chat':
       return '🙂'
     case 'reject':

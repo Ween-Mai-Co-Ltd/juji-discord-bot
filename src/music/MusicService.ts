@@ -38,6 +38,10 @@ export class MusicService {
   stop(guildId: string): boolean {
     return this.manager.stop(guildId)
   }
+
+  skip(guildId: string): { skipped: Track; next: Track | null } | null {
+    return this.manager.skip(guildId)
+  }
 }
 
 export const musicService = new MusicService(ytDlpService, musicManager)

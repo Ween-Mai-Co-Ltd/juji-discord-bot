@@ -1,4 +1,4 @@
-export type AssistantAction = 'play' | 'stop' | 'chat' | 'reject'
+export type AssistantAction = 'play' | 'stop' | 'skip' | 'chat' | 'reject'
 
 export interface AssistantResult {
   action: AssistantAction

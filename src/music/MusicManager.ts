@@ -36,6 +36,10 @@ export class MusicManager {
     return true
   }
 
+  skip(guildId: string): { skipped: Track; next: Track | null } | null {
+    return this.players.get(guildId)?.skip() ?? null
+  }
+
   snapshot(guildId: string): { current: Track | null; upcoming: Track[] } | null {
     return this.players.get(guildId)?.snapshot() ?? null
   }

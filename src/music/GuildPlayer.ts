@@ -48,6 +48,14 @@ export class GuildPlayer {
     this.destroy()
   }
 
+  skip(): { skipped: Track; next: Track | null } | null {
+    if (this.current === null) return null
+    const skipped = this.current.track
+    const next = this.queue[0]?.track ?? null
+    this.player.stop(true)
+    return { skipped, next }
+  }
+
   snapshot(): { current: Track | null; upcoming: Track[] } {
     return {
       current: this.current?.track ?? null,
