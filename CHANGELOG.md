@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.4.0...v1.5.0) (2026-06-20)
+
+
+### Features
+
+* initial API service ([95623e1](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/95623e140018e91f18ac58b47f5ca66a7861c765))
+
 # [1.4.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.3.2...v1.4.0) (2026-06-19)
 
 
