@@ -1,5 +1,6 @@
 import { Client, Collection, GatewayIntentBits } from 'discord.js'
 import { token } from './config'
+import { initLavalink } from './music/lavalink'
 import { Command } from './types/command'
 import { Event } from './types/event'
 
@@ -14,6 +15,8 @@ export async function startBot(): Promise<Client> {
 
   client.commands = new Collection()
   client.cooldowns = new Collection()
+
+  initLavalink(client)
 
   const glob = new Bun.Glob('*.ts')
 
