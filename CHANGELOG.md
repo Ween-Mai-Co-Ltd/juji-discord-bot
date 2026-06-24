@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.6.0...v1.7.0) (2026-06-24)
+
+
+### Features
+
+* **config:** add Lavalink connection config, remove music-cache config ([bdd2b47](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/bdd2b471d6ff351a95ce377a82e99383938bab49))
+
 # [1.6.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.5.0...v1.6.0) (2026-06-24)
 
 
