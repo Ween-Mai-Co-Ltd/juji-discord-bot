@@ -155,6 +155,7 @@ jobs:
           MUSIC_STREAM_THRESHOLD_SEC=${{ secrets.MUSIC_STREAM_THRESHOLD_SEC }}
           MUSIC_CACHE_RETENTION_DAYS=${{ secrets.MUSIC_CACHE_RETENTION_DAYS }}
           MUSIC_CACHE_SWEEP_HOURS=${{ secrets.MUSIC_CACHE_SWEEP_HOURS }}
+          SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }}
           EOF
 
       - name: Deploy
