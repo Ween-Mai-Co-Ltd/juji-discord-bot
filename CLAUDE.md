@@ -13,7 +13,9 @@ This project runs on **Bun** (not Node). It uses Bun-specific APIs (`Bun.Glob`, 
 
 There is no test setup. Lint config uses typescript-eslint `strict` + `stylistic`; Prettier enforces no semicolons, single quotes, trailing commas, 100-char width.
 
-Required env vars (read via `requireEnv`, which throws if missing): `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`. The HTTP API adds optional `API_PORT` (default 3000) and `API_CORS_ORIGINS` (default `*`).
+Required env vars (read via `requireEnv`, which throws if missing): `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, `SUPABASE_JWT_SECRET`. The HTTP API adds optional `API_PORT` (default 3000) and `API_CORS_ORIGINS` (default `*`).
+
+> **When adding a new env var:** update the `.env` example in [README.md](README.md), the required-env list above, and the deploy workflow's `.env` write step in [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
 
 ## Releases & Versioning
 
