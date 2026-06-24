@@ -1,47 +1,52 @@
 import type { VoiceBasedChannel } from 'discord.js'
 import { MusicManager, musicManager } from './MusicManager'
-import { YtDlpService, ytDlpService } from './YtDlpService'
-import { streamThresholdSec } from '../config'
-import type { PlaybackSource, Track } from '../types/track'
+import { toTrack } from './lavalink'
+import type { Track } from '../types/track'
 
 export type PlayResult =
   | { ok: true; track: Track; startedNow: boolean; position: number }
   | { ok: false; reason: 'live-unsupported' }
 
 export class MusicService {
-  constructor(
-    private readonly ytDlp: YtDlpService,
-    private readonly manager: MusicManager,
-  ) {}
+  constructor(private readonly manager: MusicManager) {}
 
   async playFromQuery(
     channel: VoiceBasedChannel,
     query: string,
     onResolved?: (track: Track) => void | Promise<void>,
   ): Promise<PlayResult> {
-    const track = await this.ytDlp.resolveTrack(query)
+    const player = await this.manager.getOrCreatePlayer(channel)
+
+    const result = await player.search({ query }, undefined)
+    const first = result.tracks[0]
+    if (result.loadType === 'error' || result.loadType === 'empty' || !first) {
+      throw new Error(`No results found for: ${query}`)
+    }
+
+    const track = toTrack(first)
     if (track.isLive) {
+      // Don't leave a freshly-joined, idle player hanging just to reject a live track.
+      if (!player.queue.current) await player.destroy()
       return { ok: false, reason: 'live-unsupported' }
     }
 
     await onResolved?.(track)
 
-    const source: PlaybackSource =
-      track.durationSec > streamThresholdSec
-        ? { kind: 'stream', open: () => this.ytDlp.streamTrack(track) }
-        : { kind: 'file', filePath: await this.ytDlp.downloadTrack(track) }
+    const startedNow = !player.queue.current
+    await player.queue.add(first)
+    if (startedNow) await player.play()
 
-    const { startedNow, position } = this.manager.enqueue(channel, { track, source })
+    const position = startedNow ? 0 : player.queue.tracks.length
     return { ok: true, track, startedNow, position }
   }
 
-  stop(guildId: string): boolean {
+  stop(guildId: string): Promise<boolean> {
     return this.manager.stop(guildId)
   }
 
-  skip(guildId: string): { skipped: Track; next: Track | null } | null {
+  skip(guildId: string): Promise<{ skipped: Track; next: Track | null } | null> {
     return this.manager.skip(guildId)
   }
 }
 
-export const musicService = new MusicService(ytDlpService, musicManager)
+export const musicService = new MusicService(musicManager)
