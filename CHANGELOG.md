@@ -1,3 +1,12 @@
+# [1.8.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.7.1...v1.8.0) (2026-06-24)
+
+
+### Features
+
+* **api:** add Bun-native WebSocket with Lavalink event broadcasting ([714146a](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/714146aed50b5818c593bf254b7b0a540594671f))
+* **api:** add RESTful guild player and queue routes ([03e04dd](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/03e04ddfc998cc6ac696255c2187a1c52a1fee91))
+* **music:** add requester attribution and serializable player snapshot ([c1fe6ca](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/c1fe6ca016ab8ea2cf23c1b9e094fc2f9c6342ee))
+
 ## [1.7.1](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.7.0...v1.7.1) (2026-06-24)
 
 
