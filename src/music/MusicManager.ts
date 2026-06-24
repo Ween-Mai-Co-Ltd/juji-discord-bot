@@ -1,47 +1,52 @@
-import { createAudioPlayer, joinVoiceChannel } from '@discordjs/voice'
 import type { VoiceBasedChannel } from 'discord.js'
-import { GuildPlayer } from './GuildPlayer'
-import type { QueuedTrack, Track } from '../types/track'
+import type { Player } from 'lavalink-client'
+import { lavalink, toTrack } from './lavalink'
+import type { Track } from '../types/track'
 
 export class MusicManager {
-  private readonly players = new Map<string, GuildPlayer>()
+  async getOrCreatePlayer(channel: VoiceBasedChannel): Promise<Player> {
+    const existing = lavalink.getPlayer(channel.guild.id)
+    if (existing) return existing
 
-  enqueue(
-    channel: VoiceBasedChannel,
-    item: QueuedTrack,
-  ): { startedNow: boolean; position: number } {
-    const guildId = channel.guild.id
-    let player = this.players.get(guildId)
-
-    if (!player) {
-      const connection = joinVoiceChannel({
-        channelId: channel.id,
-        guildId,
-        adapterCreator: channel.guild.voiceAdapterCreator,
-        selfDeaf: true,
-      })
-      player = new GuildPlayer(connection, createAudioPlayer(), () => {
-        this.players.delete(guildId)
-      })
-      this.players.set(guildId, player)
-    }
-
-    return player.enqueue(item)
+    const player = lavalink.createPlayer({
+      guildId: channel.guild.id,
+      voiceChannelId: channel.id,
+      selfDeaf: true,
+    })
+    await player.connect()
+    return player
   }
 
-  stop(guildId: string): boolean {
-    const player = this.players.get(guildId)
+  async stop(guildId: string): Promise<boolean> {
+    const player = lavalink.getPlayer(guildId)
     if (!player) return false
-    player.stop()
+    await player.destroy()
     return true
   }
 
-  skip(guildId: string): { skipped: Track; next: Track | null } | null {
-    return this.players.get(guildId)?.skip() ?? null
+  async skip(guildId: string): Promise<{ skipped: Track; next: Track | null } | null> {
+    const player = lavalink.getPlayer(guildId)
+    if (!player?.queue.current) return null
+
+    const skipped = toTrack(player.queue.current)
+    const upcoming = player.queue.tracks[0]
+    const next = upcoming ? toTrack(upcoming) : null
+
+    if (next) {
+      await player.skip()
+    } else {
+      await player.destroy()
+    }
+    return { skipped, next }
   }
 
   snapshot(guildId: string): { current: Track | null; upcoming: Track[] } | null {
-    return this.players.get(guildId)?.snapshot() ?? null
+    const player = lavalink.getPlayer(guildId)
+    if (!player) return null
+    return {
+      current: player.queue.current ? toTrack(player.queue.current) : null,
+      upcoming: player.queue.tracks.map(toTrack),
+    }
   }
 }
 
