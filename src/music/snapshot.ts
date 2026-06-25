@@ -10,6 +10,7 @@ export interface QueueItemDto {
 
 export interface PlayerSnapshot {
   status: 'playing' | 'paused'
+  position: number
   volume: number
   current: QueueItemDto | null
   queue: QueueItemDto[]
