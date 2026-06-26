@@ -26,7 +26,9 @@ async function readJson(c: Context): Promise<Record<string, unknown>> {
 export const guilds = new Hono()
   .get('/:guildId/player', (c) => {
     const snapshot = musicManager.getSnapshot(c.req.param('guildId'))
-    return c.json(snapshot ?? { status: 'paused', volume: 0, current: null, queue: [] })
+    return c.json(
+      snapshot ?? { status: 'paused', position: 0, volume: 0, current: null, queue: [] },
+    )
   })
   .patch('/:guildId/player', async (c) => {
     const guildId = c.req.param('guildId')

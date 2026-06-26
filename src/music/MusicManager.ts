@@ -90,6 +90,7 @@ export class MusicManager {
     if (!player) return null
     return {
       status: player.paused ? 'paused' : 'playing',
+      position: player.queue.current ? Math.round(player.position / 1000) : 0,
       volume: player.volume,
       current: player.queue.current ? toQueueItem(toTrack(player.queue.current)) : null,
       queue: player.queue.tracks.map((track) => toQueueItem(toTrack(track))),

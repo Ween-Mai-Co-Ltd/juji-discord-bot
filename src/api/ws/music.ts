@@ -10,9 +10,14 @@ const { upgradeWebSocket, websocket } = createBunWebSocket()
 
 type WsMessage =
   | {
-    type: 'playlist'
-    data: { currentlyPlaying: QueueItemDto | null; queueList: QueueItemDto[]; timestamp: string }
-  }
+      type: 'playlist'
+      data: {
+        currentlyPlaying: QueueItemDto | null
+        queueList: QueueItemDto[]
+        position: number
+        timestamp: string
+      }
+    }
   | { type: 'status'; data: 'playing' | 'paused' }
   | { type: 'volume'; data: number }
   | { type: 'alert'; data: string }
@@ -43,6 +48,7 @@ function broadcast(guildId: string, message: WsMessage): void {
     try {
       ws.send(payload)
     } catch {
+      /* best-effort: ignore sends to a closed socket */
     }
   }
 }
@@ -55,6 +61,7 @@ function stateFrames(guildId: string): WsMessage[] {
       data: {
         currentlyPlaying: snapshot?.current ?? null,
         queueList: snapshot?.queue ?? [],
+        position: snapshot?.position ?? 0,
         timestamp: new Date().toISOString(),
       },
     },
