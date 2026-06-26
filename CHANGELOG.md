@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.8.1...v1.9.0) (2026-06-26)
+
+
+### Features
+
+* **api:** expose current playback position in player snapshot and ws frame ([eb9b334](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/eb9b334cad3e7dd29533a7fc476aadfce9ad7836))
+
 ## [1.8.1](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.8.0...v1.8.1) (2026-06-24)
 
 
