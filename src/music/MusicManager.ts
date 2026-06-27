@@ -1,6 +1,6 @@
 import type { VoiceBasedChannel } from 'discord.js'
 import type { Player } from 'lavalink-client'
-import { lavalink, toTrack } from './lavalink'
+import { getDiscordClient, lavalink, toTrack } from './lavalink'
 import { type PlayerSnapshot, toQueueItem } from './snapshot'
 import type { Track } from '../types/track'
 
@@ -20,6 +20,19 @@ export class MusicManager {
     })
     await player.connect()
     return player
+  }
+
+  async resolveUserVoiceChannel(
+    guildId: string,
+    userId: string,
+  ): Promise<VoiceBasedChannel | null> {
+    const client = getDiscordClient()
+    if (!client) return null
+    const guild =
+      client.guilds.cache.get(guildId) ?? (await client.guilds.fetch(guildId).catch(() => null))
+    if (!guild) return null
+    const member = await guild.members.fetch(userId).catch(() => null)
+    return member?.voice.channel ?? null
   }
 
   async stop(guildId: string): Promise<boolean> {
