@@ -26,6 +26,10 @@ export const lavalink = new LavalinkManager({
   },
 })
 
+export function getDiscordClient(): Client | null {
+  return discordClient
+}
+
 export function initLavalink(client: Client): void {
   discordClient = client
 
