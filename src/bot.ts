@@ -6,11 +6,7 @@ import { Event } from './types/event'
 
 export async function startBot(): Promise<Client> {
   const client = new Client({
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildVoiceStates,
-      GatewayIntentBits.GuildMessages,
-    ],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
   })
 
   client.commands = new Collection()
