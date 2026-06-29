@@ -10,8 +10,9 @@ FROM base AS release
 ENV NODE_ENV=production
 
 COPY --from=install /temp/prod/node_modules node_modules
-COPY package.json tsconfig.json ./
+COPY package.json tsconfig.json drizzle.config.ts ./
+COPY drizzle ./drizzle
 COPY src ./src
 EXPOSE 3000
 USER bun
-ENTRYPOINT ["sh", "-c", "bun run deploy && bun run start"]
+ENTRYPOINT ["sh", "-c", "bun run deploy && bunx drizzle-kit migrate && bun run start"]
