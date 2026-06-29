@@ -1,3 +1,10 @@
+## [1.12.3](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.12.2...v1.12.3) (2026-06-29)
+
+
+### Bug Fixes
+
+* **analytics:** flush listen events on player destroy ([0754ea3](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/0754ea33be07b6f824cbf7e6b08cea5d497056ce))
+
 ## [1.12.2](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.12.1...v1.12.2) (2026-06-29)
 
 
