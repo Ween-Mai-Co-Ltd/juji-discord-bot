@@ -65,6 +65,11 @@ Under Docker Compose it's **internal to the Compose network** (not published to 
    # HISTORY_TTL_SECONDS=86400              # per-guild history list TTL, refreshed on each play (default: 86400 = 24h)
    # HISTORY_MAX=50                         # max distinct tracks returned per guild (default: 50)
 
+   # Optional (playback analytics / Postgres):
+   # DATABASE_URL=postgres://juji:juji@postgres:5432/juji  # Postgres URL (default: the compose service); analytics disabled if unreachable
+   # POSTGRES_USER=juji                     # Postgres user for the compose service (default: juji)
+   # POSTGRES_PASSWORD=juji                 # Postgres password for the compose service (default: juji)
+
    ```
 
    `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, and `SUPABASE_URL` are required and validated at startup. The `LAVALINK_*` vars are optional and default to the bundled Compose `lavalink` service.

@@ -3,10 +3,31 @@ services:
     build: .
     restart: unless-stopped
     depends_on:
-      - lavalink
-      - redis
+      postgres:
+        condition: service_healthy
+      lavalink:
+        condition: service_started
+      redis:
+        condition: service_started
     env_file:
       - .env
+    networks:
+      - juji-network
+
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: juji
+      POSTGRES_USER: ${POSTGRES_USER:-juji}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-juji}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-juji} -d juji']
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - juji-network
 
@@ -26,6 +47,9 @@ services:
       - ./application.yml:/opt/Lavalink/application.yml:ro
     networks:
       - juji-network
+
+volumes:
+  pgdata:
 
 networks:
   juji-network:
