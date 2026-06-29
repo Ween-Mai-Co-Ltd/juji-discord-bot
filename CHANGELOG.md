@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.11.0...v1.11.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* remove LLM feature ([4405738](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/44057386379d6e8034b5ca7a2a42b6a31ac3f30c))
+
 # [1.11.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.10.0...v1.11.0) (2026-06-27)
 
 
