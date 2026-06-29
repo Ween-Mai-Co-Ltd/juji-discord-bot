@@ -14,15 +14,6 @@ A Discord bot built with [discord.js](https://discord.js.org) v14, running on th
 
 The music player joins the voice channel you're in and queues tracks per server — `/play` while something is already playing adds to the queue instead of interrupting it. Audio is resolved and streamed by a separate [Lavalink](https://lavalink.dev) node (YouTube via the [youtube-source](https://github.com/lavalink-devs/youtube-source) plugin); the bot just drives it over the network, so nothing is fetched or transcoded in-process. **Live streams aren't supported** and are politely declined.
 
-## Chat
-
-`@mention` the bot in a text channel and it replies using a local LLM via [Ollama](https://ollama.com). It can also control music from natural language — e.g. "@Juji play lofi beats", "@Juji skip", or "@Juji stop the music". Notes:
-
-- It responds **only** to messages that mention it (replies are ignored for now), and ignores other bots.
-- **No memory** — each message is a standalone prompt.
-- It stays on-topic (chat + music); off-topic, unsafe, or instruction-override requests get a polite decline.
-- LLM requests are processed **one at a time** across the whole bot (a global queue), so a small CPU-only model stays within budget.
-
 ## HTTP API
 
 The bot also runs a small [Hono](https://hono.dev) HTTP server in the **same process** (it's another adapter over the same domain logic, alongside the Discord one). It's the entry point for a future web music control panel.
@@ -44,9 +35,6 @@ Under Docker Compose it's **internal to the Compose network** (not published to 
 - A Discord application with a bot token ([Discord Developer Portal](https://discord.com/developers/applications))
 - For the music player (`/play`, `/skip`, `/stop`):
   - A reachable [Lavalink](https://lavalink.dev) v4 node. With Docker Compose this is the bundled `lavalink` service; for local dev, run `docker compose up -d lavalink` (or your own node) and point `LAVALINK_HOST`/`LAVALINK_PORT`/`LAVALINK_PASSWORD` at it. No `yt-dlp`/`ffmpeg` on the host anymore.
-- For the chat assistant (mention the bot):
-  - An [Ollama](https://ollama.com) server reachable by the bot. With Docker Compose this is the bundled `ollama` service; for local dev, run Ollama yourself and set `OLLAMA_HOST` (or set `LLM_ENABLED=false` to turn chat off).
-
 ## Setup
 
 1. Install dependencies:
@@ -77,13 +65,6 @@ Under Docker Compose it's **internal to the Compose network** (not published to 
    # HISTORY_TTL_SECONDS=86400              # per-guild history list TTL, refreshed on each play (default: 86400 = 24h)
    # HISTORY_MAX=50                         # max distinct tracks returned per guild (default: 50)
 
-   # Optional (chat assistant / Ollama):
-   # OLLAMA_HOST=http://localhost:11434   # Ollama base URL (default: http://ollama:11434, the compose service)
-   # OLLAMA_MODEL=gemma4:e2b              # model to run (default: gemma4:e2b)
-   # OLLAMA_NUM_CTX=4096                  # context window; kept small so the KV cache doesn't OOM the model (default: 4096)
-   # LLM_TIMEOUT_MS=120000                # per-request timeout in ms (default: 120000)
-   # LLM_MAX_INPUT_CHARS=1000             # cap on user prompt length (default: 1000)
-   # LLM_ENABLED=false                    # disable chat entirely (default: true)
    ```
 
    `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, and `SUPABASE_URL` are required and validated at startup. The `LAVALINK_*` vars are optional and default to the bundled Compose `lavalink` service.
@@ -149,13 +130,9 @@ To stop: `docker compose down`.
 
 > The container runs `bun run deploy && bun run start` on startup, so slash commands are re-registered with Discord automatically on every launch. The service uses `restart: unless-stopped`, so it survives crashes and server reboots.
 
-The Compose stack also runs a [Lavalink](https://lavalink.dev) v4 node for audio (the bot reaches it at `http://lavalink:2333` over `juji-network` — `LAVALINK_HOST` defaults to `lavalink`, so only `LAVALINK_PASSWORD` needs to match [application.yml](application.yml)). Its config is mounted from `./application.yml`; on boot Lavalink downloads the `youtube-source` plugin into its own container filesystem (watch for `Lavalink is ready to accept connections`). Heap is capped at `-Xmx384m` since it shares the CPU host with Ollama — bump `_JAVA_OPTIONS` only if it OOMs. If YouTube starts returning "Sign in to confirm you're not a bot", enable the commented `plugins.youtube.oauth` block in `application.yml` with a refresh token.
+The Compose stack also runs a [Lavalink](https://lavalink.dev) v4 node for audio (the bot reaches it at `http://lavalink:2333` over `juji-network` — `LAVALINK_HOST` defaults to `lavalink`, so only `LAVALINK_PASSWORD` needs to match [application.yml](application.yml)). Its config is mounted from `./application.yml`; on boot Lavalink downloads the `youtube-source` plugin into its own container filesystem (watch for `Lavalink is ready to accept connections`). Heap is capped at `-Xmx384m` — bump `_JAVA_OPTIONS` only if it OOMs. If YouTube starts returning "Sign in to confirm you're not a bot", enable the commented `plugins.youtube.oauth` block in `application.yml` with a refresh token.
 
 The HTTP API is **not published to the host** — it's reachable only on the Compose network, so a frontend/proxy added to the same stack calls it at `http://juji-discord-bot:${API_PORT:-3000}`. To hit it from the host for debugging, either add a `ports:` mapping to the service or `docker compose exec juji-discord-bot curl http://localhost:3000/health`.
-
-The Compose stack also starts an [Ollama](https://ollama.com) service for the chat assistant (the bot reaches it at `http://ollama:11434` over the Compose network — no extra env needed). On first boot the bot **auto-pulls** the configured model (`gemma4:e2b` by default); this can take a while, so watch for `[llm] model … pulled` in the logs. The model is loaded into memory **lazily on the first chat message** (not at pull time), so `ollama ps` stays empty until someone @mentions the bot. To pull manually: `docker compose exec ollama ollama pull gemma4:e2b`. Models persist in the `ollama_models` volume.
-
-The `ollama` service env keeps inference cheap and bounded on a CPU host: `OLLAMA_NUM_PARALLEL=1` + `OLLAMA_MAX_LOADED_MODELS=1` process one prompt at a time, and `OLLAMA_CONTEXT_LENGTH=4096` caps the context — a large context makes Ollama allocate a KV cache big enough to OOM-kill the model runner on load (`llama runner process has terminated: signal: killed`). The bot also sends `num_ctx` per request, so it's capped from both sides.
 
 ## Project structure
 
@@ -168,7 +145,6 @@ src/
 ├── events/               # Gateway event handlers (one class file each)
 ├── api/                  # HTTP adapter (Hono) — startApi + routes/ (one Hono sub-app per resource)
 ├── music/                # Music domain — MusicService, MusicManager, Lavalink client wiring
-├── llm/                  # Chat domain — OllamaClient, SerialQueue, Assistant
 ├── config/               # Env var loading & validation
 └── types/                # Shared TypeScript types & Client augmentation
 ```
