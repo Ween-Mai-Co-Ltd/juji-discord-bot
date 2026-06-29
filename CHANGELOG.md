@@ -1,3 +1,11 @@
+# [1.13.0](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.12.3...v1.13.0) (2026-06-29)
+
+
+### Features
+
+* **analytics:** add stats query module with redis cache ([8b98a13](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/8b98a134aa7f18a0cd99b921650ffda9844f6fad))
+* **api:** expose guild stats & leaderboard endpoints ([d57109c](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/commit/d57109ccd3feca2b2d5b4d98b8c4657b7f2e5580))
+
 ## [1.12.3](https://github.com/Ween-Mais-Co-Ltd/juji-discord-bot/compare/v1.12.2...v1.12.3) (2026-06-29)
 
 
