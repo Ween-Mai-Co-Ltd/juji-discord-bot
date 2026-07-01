@@ -1,3 +1,17 @@
+# [1.14.0](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.13.1...v1.14.0) (2026-07-01)
+
+
+### Bug Fixes
+
+* **stats:** exclude auto-dj plays from most-played tracks ([612e269](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/commit/612e2695b5b2e0d55d2b157773ebf6449640e38f))
+
+
+### Features
+
+* **api:** DJ config endpoints for the web settings menu ([f548a1c](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/commit/f548a1cb8bc5048d016572916033b0860a0123bf))
+* **db:** add guild_dj_configs table + migration ([9ea7561](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/commit/9ea7561bd213abe9af3a29ce5c313a4c41ca2ca3))
+* **dj:** presence-driven auto-play DjManager ([42cf7ed](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/commit/42cf7eda433c181911906732767e64e319b94784))
+
 ## [1.13.1](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.13.0...v1.13.1) (2026-07-01)
 
 
