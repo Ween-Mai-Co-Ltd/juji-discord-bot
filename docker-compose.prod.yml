@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
     pull_policy: always
     environment:
-      - _JAVA_OPTIONS=-Xmx512m
+      - _JAVA_OPTIONS=-Xmx4g
       - LAVALINK_SERVER_PASSWORD=${LAVALINK_PASSWORD:-youshallnotpass}
     volumes:
       - ./application.yml:/opt/Lavalink/application.yml:ro
