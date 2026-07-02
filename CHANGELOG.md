@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.14.0...v1.14.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* **docker:** increase lavalink jvm heap size to 4gb ([3338a6d](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/commit/3338a6dc9930967831043ebd140df0d2663cf18f))
+
 # [1.14.0](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.13.1...v1.14.0) (2026-07-01)
 
 
