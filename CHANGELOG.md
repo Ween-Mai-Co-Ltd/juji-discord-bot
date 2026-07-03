@@ -1,3 +1,10 @@
+## [1.15.1](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.15.0...v1.15.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* **music:** enforce mutually-exclusive filters in applyFilterPatch ([35c5d8b](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/commit/35c5d8b9bcfdd201c0f1f20f95f0cfa0d4c9054c))
+
 # [1.15.0](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.14.1...v1.15.0) (2026-07-03)
 
 
