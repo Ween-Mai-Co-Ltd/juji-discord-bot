@@ -69,16 +69,16 @@ export function toFilterState(player: Player): FilterState {
 export async function applyFilterPatch(player: Player, patch: FilterPatch): Promise<void> {
   const fm = player.filterManager
 
-  if (patch.bassboost !== undefined) {
-    if (patch.bassboost === null) await fm.clearEQ()
-    else await fm.setEQPreset(`Bassboost${patch.bassboost}`)
-  }
+  const bassboost = patch.bassboost ?? null
+  const enabledToggle = bassboost ? undefined : TOGGLE_FILTERS.find((key) => patch[key] === true)
 
-  for (const key of TOGGLE_FILTERS) {
-    const desired = patch[key]
-    if (desired !== undefined && fm.filters[key] !== desired) {
-      await TOGGLE_METHODS[key](fm)
-    }
+  await fm.resetFilters()
+  await fm.clearEQ()
+
+  if (bassboost) {
+    await fm.setEQPreset(`Bassboost${bassboost}`)
+  } else if (enabledToggle) {
+    await TOGGLE_METHODS[enabledToggle](fm)
   }
 }
 
