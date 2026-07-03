@@ -1,3 +1,11 @@
+# [1.15.0](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.14.1...v1.15.0) (2026-07-03)
+
+
+### Features
+
+* **api:** filter endpoints + live filter broadcast ([8225c87](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/commit/8225c879eb83ab0b57de6c9476ce4519804cdfa8))
+* **music:** core Lavalink filter state + apply helpers ([c665c21](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/commit/c665c21164b68e2590c2158f116c30b7a75f85c0))
+
 ## [1.14.1](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.14.0...v1.14.1) (2026-07-02)
 
 
