@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/WeenMize-Co-Ltd/juji-discord-bot/compare/v1.15.2...v1.16.0) (2026-07-19)
+
+
+### Features
+
+* **api:** add player/jump/:position endpoint ([e6cc8df](https://github.com/WeenMize-Co-Ltd/juji-discord-bot/commit/e6cc8df66d37edb89d4c81553ce8e26fa800a912))
+
 ## [1.15.2](https://github.com/Ween-Mai-Co-Ltd/juji-discord-bot/compare/v1.15.1...v1.15.2) (2026-07-06)
 
 
